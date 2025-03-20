@@ -18,5 +18,5 @@ jobs:
 
     - name: Run hash check script
       run: |
-        chmod +x .github/scripts/sri-hash-check.sh
-        .github/scripts/sri-hash-check.sh
+        chmod +x .github/scripts/check_sri_hash.sh
+        .github/scripts/check_sri_hash.sh
