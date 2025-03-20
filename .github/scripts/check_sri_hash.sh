@@ -31,8 +31,13 @@ done
 
 # If any file is outdated, exit with an error
 if [ "$OUTDATED" = true ]; then
+    echo -e "\n"
+    echo -e "______________________________________________________________"
+    echo -e "\n"
     echo "⚠️ The CSS file hash at webassets.iota.org has changed."
     echo "Please update the affected files with the new hash: sha384-$NEW_HASH"
+    echo -e "\n"
+    echo -e "______________________________________________________________"
     exit 1
 else
     echo "✅ All integrity hashes are up to date."
