@@ -1,4 +1,4 @@
-name: Check SRI integrity for webassets.iota.org in
+name: Check SRI integrity for webassets.iota.org
 
 on:
   schedule:
