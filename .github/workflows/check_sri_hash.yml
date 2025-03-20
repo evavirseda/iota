@@ -18,8 +18,7 @@ jobs:
 
     - name: Run hash check script
       run: |
-        #!/bin/bash
-
+        /bin/bash << 'EOF'
         # Fetch the current CSS file from webassets.iota.org and calculate its SHA-384 hash
         NEW_HASH=$(curl -s -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
             -H "Accept: text/css,*/*;q=0.1" \
@@ -59,3 +58,4 @@ jobs:
         else
             echo "✅ All integrity hashes are up to date."
         fi
+        EOF
