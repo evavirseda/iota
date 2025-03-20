@@ -1,0 +1,22 @@
+name: Check Hash
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  check-hash:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Run hash check script
+      run: |
+        chmod +x ./check_hash.sh
+        ./check_hash.sh
