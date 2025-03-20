@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# Define the folder scope to check all files within apps/*
-FOLDER_SCOPE="apps/*"
-
-# Download the CSS file from webassets.iota.org and calculate its SHA-384 hash
+# Fetch the current CSS file from webassets.iota.org and calculate its SHA-384 hash
 NEW_HASH=$(curl -s -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
     -H "Accept: text/css,*/*;q=0.1" \
     -H "Referer: https://webassets.iota.org/" \
@@ -11,17 +8,23 @@ NEW_HASH=$(curl -s -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537
 
 echo "🔍 New hash obtained: sha384-$NEW_HASH"
 
-# Find all HTML and CSS files under the specified scope
-FILES=$(find $FOLDER_SCOPE -type f \( -iname \*.html -o -iname \*.css \))
+# Define the scope to search for files
+FOLDER_SCOPE="apps/*"
 
+# Find all HTML and CSS files that contain links to webassets.iota.org
+FILES=$(grep -rl "webassets.iota.org" $FOLDER_SCOPE --include=\*.html --include=\*.css)
+
+# Loop through each file that contains references to webassets.iota.org
 OUTDATED=false
-
-# Loop through each file and check if the hash matches
 for FILE in $FILES; do
-    if grep -q "sha384-$NEW_HASH" "$FILE"; then
-        echo "✅ The file $FILE already has the updated hash."
+    # Extract the integrity value from the file (assuming it's in the form sha384-...)
+    INTEGRITY_HASH=$(grep -oP 'integrity="sha384-\K[^"]+' "$FILE")
+
+    # Compare the extracted hash with the new hash
+    if [[ "$INTEGRITY_HASH" == "$NEW_HASH" ]]; then
+        echo "✅ The file $FILE has the correct integrity hash."
     else
-        echo "❌ ERROR: The file $FILE has an outdated hash. 🚨"
+        echo "❌ ERROR: The file $FILE has an outdated or incorrect integrity hash. 🚨"
         OUTDATED=true
     fi
 done
@@ -29,10 +32,10 @@ done
 # If any file is outdated, exit with an error
 if [ "$OUTDATED" = true ]; then
     echo -e "\n🚨🚨🚨"
-    echo "The hash of the CSS file from webassets.iota.org has changed."
+    echo "The CSS file hash at webassets.iota.org has changed."
     echo "Please update the affected files with the new hash: sha384-$NEW_HASH"
     echo "🚨🚨🚨"
     exit 1
 else
-    echo "✅ All hashes are up to date."
+    echo "✅ All integrity hashes are up to date."
 fi
