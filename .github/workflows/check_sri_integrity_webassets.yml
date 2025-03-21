@@ -2,7 +2,7 @@ name: Check SRI integrity for webassets.iota.org
 
 on:
   schedule:
-    - cron: "0 */3 * * *" # every 3 hours
+    - cron: "*/5 * * * *"  # 5 minutes
 
 jobs:
   check-hash:
